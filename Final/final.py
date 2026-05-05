@@ -3,15 +3,26 @@ import matplotlib.pyplot as plt
 import math
 
 def compZ(zeta):
-
     return zeta + 1/zeta
     #return (a+1/a)*np.cos(theta) + 1j*(a-1/a)*np.sin(theta)
 def compZeta(a, m, theta):
     return a*np.exp(1j*theta)-m
     #return a*np.cos(theta)+1j*a*np.sin(theta)
 
-theta = np.linspace(0,2*np.pi, 100)
+def zetafz(z):
+    return 0.5*(z+np.sqrt(z-2)*np.sqrt(z+2))
+def cylFlow(zeta, U, a):
+    return U*zeta+U*a*a/zeta
 
+x = np.linspace(-3, 3, 1001)
+y = np.linspace(-3, 3, 1001)
+
+xx, yy = np.meshgrid(x,y)
+
+zz = xx + 1j*yy
+
+
+theta = np.linspace(0,2*np.pi, 100)
 
 m004 = 0.03181286228622863
 m008 = 2.065*0.03181286228622863
@@ -21,6 +32,13 @@ m008_book = 0.08/1.3
 
 a004 = 1.0 + m004
 a008 = 1.0 + m008
+
+U_inf = 1.0
+
+zetzet = zetafz(zz)
+Fzet = cylFlow(zetzet, U_inf, a008)
+
+Zout = compZ(Fzet)
 
 zeta004 = compZeta(a004,m004,theta)
 z004 = compZ(zeta004)
@@ -82,6 +100,10 @@ axs[1].set_aspect('equal', adjustable='datalim')
 
 axs[0].grid(True)
 axs[1].grid(True)
+
+fig3, ax = plt.subplots()
+
+Contour = ax.contour(xx, yy, Fzet.imag, 30)
 
 #fig2, axs = plt.subplots(1,2)
 
