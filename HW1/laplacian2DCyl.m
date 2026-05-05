@@ -49,16 +49,45 @@ plot(th, psi1);
 grid on;
 xlim([0 6])
 ylim([-1.5 1.5])
+xlabel('$\theta$',Interpreter='latex',Fontsize=14)
+ylabel('$\psi_1$',Interpreter='latex',Fontsize=14)
 subplot(212);
 %hold on;
 plot(th,dpsi);
 grid on;
+xlabel('$\theta$',Interpreter='latex',Fontsize=14)
+ylabel('$\frac{\delta\psi_1}{\delta n}$',Interpreter='latex',Fontsize=14)
+saveas(part2,'part2cyl','epsc')
 
 
 % Visualize solution
 [XX,YY] = meshgrid(-4:.05:4, -4:.05:4);
 RR = sqrt(XX.^2+YY.^2);
 TT = atan(YY./XX);
+PsiAnalytic = (RR - 1./RR)*sin(TT);
+
+%Nr = 100;
+%
+%r_max = 10;
+%
+%dr = (r_max-1)/(Nr-1);
+%[rTest thetaTest] = ndgrid(1:dr:r_max, 0:dth:2*pi-dth);
+%psi_polar = (rTest-1./rTest).*sin(thetaTest);
+%x = rTest.*cos(thetaTest);
+%y = rTest.*sin(thetaTest);
+%psiFun = @(x,y) y-(y./(x.^2+y.^2));
+%psiexact = psiFun(x,y);
+%psiHandle = fcontour(psiFun,[-5 5 -5 5],LineWidth=1);
+%
+%part4 = figure;
+%hold on;
+%psiHandle.LevelList = linspace(-5,5,21);
+%grid on
+%pbaspect([1 1 1]);
+%xlabel('x',Interpreter='latex',Fontsize=14)
+%ylabel('y',Interpreter='latex',Fontsize=14)
+%saveas(part4,'part4el','epsc')
+
 %rhos = 0*XX;
 
 psi = 0*XX;
@@ -81,9 +110,19 @@ end
 %psi = psi + RR.*sin(TT);
 psi = psi + YY;
 
+
 part3 = figure;
-contour(XX, YY, psi, 100);
+hold on;
+contour(XX, YY, psi, 100, Linewidth=1);
+colormap(nebula)
+grid on;
+plot(x(1,:), x(2,:),color='w',LineWidth=2);
 pbaspect([1 1 1]);
+xlabel('x',Interpreter='latex',Fontsize=14)
+ylabel('y',Interpreter='latex',Fontsize=14)
+set(gca,'fontsize', 14);
+saveas(part3,'part3cyl' + string(N),'epsc')
+
 %
 %% incident wave
 %rhoi = exp(1i*k*XX);

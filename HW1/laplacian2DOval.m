@@ -15,7 +15,8 @@ th = [dth/2:dth:2*pi-dth/2];
 
 e = sqrt(1-(1/3)^2);
 
-r = 1./sqrt(1-e.*cos(th));
+%r = 1./sqrt(1-(e.*cos(th)).^2);
+r = 1./sqrt(1-(e.*cos(th+pi/6.0)).^2);
 
 x = [r.*cos(th); r.*sin(th)];
 
@@ -68,10 +69,15 @@ plot(th, psi1);
 grid on;
 xlim([0 6])
 ylim([-1.5 1.5])
+xlabel('$\theta$',Interpreter='latex',Fontsize=14)
+ylabel('$\psi_1$',Interpreter='latex',Fontsize=14)
 subplot(212);
 %hold on;
 plot(th,dpsi);
 grid on;
+xlabel('$\theta$',Interpreter='latex',Fontsize=14)
+ylabel('$\frac{\delta\psi_1}{\delta n}$',Interpreter='latex',Fontsize=14)
+saveas(part2,'part2el','epsc')
 
 
 % Visualize solution
@@ -98,11 +104,21 @@ for i1 = 1:N  % loop over source panels
 end
 
 %psi = psi + RR.*sin(TT);
-psi = psi + XX;
+psi = psi + YY;
+%psi = psi + exp(-i*(pi/6));
 
 part3 = figure;
-contour(XX, YY, psi, 100);
+hold on;
+%contour(XX, YY, psi, 100);
+contour(XX, YY, real(psi), 100);
+colormap(nebula)
+grid on;
+plot(x(1,:), x(2,:),color='w',LineWidth=2);
 pbaspect([1 1 1]);
+xlabel('x',Interpreter='latex',Fontsize=14)
+ylabel('y',Interpreter='latex',Fontsize=14)
+set(gca,'fontsize', 14);
+saveas(part3,'part3el','epsc')
 %
 %% incident wave
 %rhoi = exp(1i*k*XX);
