@@ -2,37 +2,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def z(zeta):
+def compZ(zeta):
     return zeta + 1/zeta
     #return (a+1/a)*np.cos(theta) + 1j*(a-1/a)*np.sin(theta)
-def zeta(a, m, theta):
+def compZeta(a, m, theta):
     return a*np.exp(1j*theta)-m
     #return a*np.cos(theta)+1j*a*np.sin(theta)
 
 theta = np.linspace(0,2*np.pi, 100)
 
-m = 0.001
-a = 1.0 + m
+tol = 0.000001
 
-zeta = zeta(a,m,theta)
-z = z(zeta)
+m = np.linspace(0.00001, 1.0, 10000)
 
-#print(zeta.real)
-#print(a*np.cos(theta))
-#print(z)
+for lv1 in range(m.size):
+    miter = m[lv1]
+    #print(miter)
+    a = 1.0 + miter
 
-top = np.max(z.imag)
-bottom = np.min(z.imag)
+    zeta = compZeta(a,miter,theta)
+    z = compZ(zeta)
 
-left = np.min(z.real)
-right = np.max(z.real)
+    #print(zeta.real)
+    #print(a*np.cos(theta))
+    #print(z)
 
-t = top-bottom
-l = right-left
+    top = np.max(z.imag)
+    bottom = np.min(z.imag)
 
-ratio = t/l
+    left = np.min(z.real)
+    right = np.max(z.real)
 
-print(ratio)
+    t = top-bottom
+    l = right-left
+
+    ratio = t/l
+
+    if (abs(ratio-0.08))<tol:
+        m008 = miter
+        print(m008,ratio)
+        break
+
 
 fig1, axs = plt.subplots(1,2)
 
