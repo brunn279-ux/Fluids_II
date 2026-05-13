@@ -3,23 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def compZ(zeta):
-    return zeta + 1/zeta
-    #return (a+1/a)*np.cos(theta) + 1j*(a-1/a)*np.sin(theta)
-def compZeta(a, m, theta):
-    return a*np.exp(1j*theta)-m
-    #return a*np.cos(theta)+1j*a*np.sin(theta)
-
-def zetafz(z, m):
-    return 0.5*(z+np.sqrt(z-2)*np.sqrt(z+2))+m
-def cylFlow(zeta, U, a, m):
-    return U*zeta+U*a*a/zeta
-def find_nearest(array,value): #pulled from stack exchange
-    idx = np.searchsorted(array, value, side="left")
-    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
-        return idx-1
-    else:
-        return idx
+from funcScript import *
 
 x = np.linspace(-3, 3, 1001)
 y = np.linspace(-3, 3, 1001)
@@ -33,7 +17,7 @@ theta = np.linspace(0,2*np.pi, 500)
 midpoint = np.pi
 
 midpointind = find_nearest(theta, midpoint)
-#print(midpointind)
+print(midpointind)
 
 m004 = 0.03181286228622863
 m008 = 2.065*0.03181286228622863
@@ -54,38 +38,43 @@ Zout = compZ(Fzet)
 zeta004 = compZeta(a004,m004,theta)
 z004 = compZ(zeta004)
 
-#print(zeta.real)
-#print(a*np.cos(theta))
-#print(z)
-
-top = np.max(z004.imag)
-bottom = np.min(z004.imag)
-
-left = np.min(z004.real)
-right = np.max(z004.real)
-
-t = top-bottom
-l = right-left
-
-ratio004 = t/l
-
 zeta008 = compZeta(a008,m008,theta)
 z008 = compZ(zeta008)
 
-#print(zeta.real)
-#print(a*np.cos(theta))
-#print(z)
+cumLen004 = np.zeros(midpointind)
+cumLen008 = np.zeros(midpointind)
 
-top = np.max(z008.imag)
-bottom = np.min(z008.imag)
+norms004 = np.zeros(midpointind, dtype=complex)
+norms008 = np.zeros(midpointind, dtype=complex)
 
-left = np.min(z008.real)
-right = np.max(z008.real)
+fig, axs = plt.subplots(1,2)
 
-t = top-bottom
-l = right-left
+for lv1 in range(midpointind-1):
+    backlv1 = midpoint-lv1 #sort this out because right now I think cumlen is backwards
+    cumLen004[lv1+1] = cumLen004[lv1]+((z004[lv1+1]-z004[lv1]).real**2+(z004[lv1+1]-z004[lv1]).imag**2)**0.5
+    cumLen008[lv1+1] = cumLen008[lv1]+((z008[lv1+1]-z008[lv1]).real**2+(z008[lv1+1]-z008[lv1]).imag**2)**0.5
+    axs[0].plot([z004[lv1].real, z004[lv1+1].real],[z004[lv1].imag, z004[lv1+1].imag])
+#    axs[0].plot([norms004[lv1].real, norms004[lv1+1].real],[norms004[lv1].imag, norms004[lv1+1].imag])
+#
+    axs[1].plot([z008[lv1].real, z008[lv1+1].real],[z008[lv1].imag, z008[lv1+1].imag])
+#    axs[1].plot([norms008[lv1].real, norms008[lv1+1].real],[norms008[lv1].imag, norms008[lv1+1].imag])
+#    #plt.show()
+    plt.draw()
+    plt.pause(0.1)
+#
+    print(cumLen004[lv1], '\n', cumLen008[lv1], '\n', lv1)
 
-ratio008 = t/l
+tanVel004 = velFunc(z004[:midpointind], U_inf, a004, m004)
+tanVel008 = velFunc(z008[:midpointind], U_inf, a008, m008)
+
+#    norms004[lv1] = 1j*(z004[lv1+1]-z004[lv1])+z004[lv1]
+#    norms008[lv1] = 1j*(z008[lv1+1]-z008[lv1])+z008[lv1]
+#
+#norms004[-1] = (-(z004[1]-z004[0]).imag+1.j*(z004[1]-z004[0]).real)+z004[0]
+#norms008[-1] = (-(z008[1]-z008[0]).imag+1.j*(z008[1]-z008[0]).real)+z008[0]
+
+ratio004 = thickVal(z004)
+ratio008 = thickVal(z008)
 
 print(ratio004, ratio008)
 #print(ratio004_book, ratio008_book) this line of code didnt work, 
@@ -117,6 +106,29 @@ fig3, ax = plt.subplots()
 Contour = ax.contour(xx, yy, Fzet.imag, 30, cmap='plasma')
 ax.grid(True)
 
+fig4, axs = plt.subplots(1,2)
+
+axs[0].plot(cumLen004, np.abs(tanVel004[::-1]))
+axs[0].set_aspect('equal', adjustable='datalim')
+axs[1].plot(cumLen008, np.abs(tanVel008[::-1]))
+axs[1].set_aspect('equal', adjustable='datalim')
+
+
+axs[0].grid(True)
+axs[1].grid(True)
+#for lv1 in range(norms004.size-1):
+#    axs[0].plot([z004[lv1].real, z004[lv1+1].real],[z004[lv1].imag, z004[lv1+1].imag])
+#    axs[0].plot([norms004[lv1].real, norms004[lv1+1].real],[norms004[lv1].imag, norms004[lv1+1].imag])
+#
+#    axs[1].plot([z008[lv1].real, z008[lv1+1].real],[z008[lv1].imag, z008[lv1+1].imag])
+#    axs[1].plot([norms008[lv1].real, norms008[lv1+1].real],[norms008[lv1].imag, norms008[lv1+1].imag])
+#    #plt.show()
+#    plt.draw()
+#    plt.pause(0.1)
+#
+#
+#axs[0].grid(True)
+#axs[1].grid(True)
 #fig2, axs = plt.subplots(1,2)
 
 #axs[0].plot(theta, zeta.imag)

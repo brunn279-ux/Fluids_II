@@ -3,17 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def compZ(zeta):
-    return zeta + 1/zeta
-    #return (a+1/a)*np.cos(theta) + 1j*(a-1/a)*np.sin(theta)
-def compZeta(a, m, theta):
-    return a*np.exp(1j*theta)-m
-    #return a*np.cos(theta)+1j*a*np.sin(theta)
-
-def zetafz(z, m):
-    return 0.5*(z+np.sqrt(z-2)*np.sqrt(z+2))+m
-def cylFlow(zeta, U, a, m):
-    return U*zeta+U*a*a/zeta
+from funcScript import *
 
 x = np.linspace(-3, 3, 1001)
 y = np.linspace(-3, 3, 1001)
